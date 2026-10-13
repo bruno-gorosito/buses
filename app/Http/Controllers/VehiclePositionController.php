@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\EstimateRouteProgress;
 use App\Actions\EstimateArrivalTime;
+use App\Actions\EstimateRouteProgress;
 use App\Http\Resources\GpsPositionResource;
 use App\Models\Vehicle;
 use Illuminate\Http\JsonResponse;

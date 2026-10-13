@@ -176,7 +176,11 @@ async function refreshPosition(activeSession: number): Promise<void> {
         const payload = (await response.json()) as {
             data: VehiclePosition | null;
             route_tracking?: RouteTracking;
-            arrival_estimate?: { seconds: number | null; assumed_speed_kmh: number | null; status: string };
+            arrival_estimate?: {
+                seconds: number | null;
+                assumed_speed_kmh: number | null;
+                status: string;
+            };
         };
         if (activeSession !== monitoringSession) return;
         position.value = payload.data;
@@ -441,16 +445,35 @@ onBeforeUnmount(() => {
                             Se supone avance desde la primera parada hacia la
                             última. El sentido de marcha todavía no se verifica.
                         </p>
-                        <p v-if="arrivalEstimate?.seconds != null" class="font-medium">
+                        <p
+                            v-if="arrivalEstimate?.seconds != null"
+                            class="font-medium"
+                        >
                             ETA de prueba hasta la próxima parada:
-                            {{ arrivalEstimate.seconds < 60 ? 'menos de un minuto' : `aproximadamente ${Math.ceil(arrivalEstimate.seconds / 60)} min` }}
-                            si continúa a {{ arrivalEstimate.assumed_speed_kmh }} km/h.
+                            {{
+                                arrivalEstimate.seconds < 60
+                                    ? 'menos de un minuto'
+                                    : `aproximadamente ${Math.round(arrivalEstimate.seconds / 60)} min`
+                            }}
+                            si continúa a
+                            {{ arrivalEstimate.assumed_speed_kmh }} km/h.
                         </p>
-                        <p v-else-if="arrivalEstimate?.status === 'unreliable_time'">
-                            ETA no disponible: la medición tiene más de un minuto o su hora está adelantada.
+                        <p
+                            v-else-if="
+                                arrivalEstimate?.status === 'unreliable_time'
+                            "
+                        >
+                            ETA no disponible: la medición tiene más de un
+                            minuto o su hora está adelantada.
                         </p>
-                        <p v-else-if="arrivalEstimate">ETA no disponible para esta lectura.</p>
-                        <p class="text-muted-foreground">El ETA usa una velocidad asumida; todavía no contempla detenciones, tráfico ni cambios de velocidad.</p>
+                        <p v-else-if="arrivalEstimate">
+                            ETA no disponible para esta lectura.
+                        </p>
+                        <p class="text-muted-foreground">
+                            El ETA usa una velocidad asumida; todavía no
+                            contempla detenciones, tráfico ni cambios de
+                            velocidad.
+                        </p>
                     </div>
                     <Link :href="gpsSender()" class="text-sm underline"
                         >Abrir pantalla de envío en el celular</Link
